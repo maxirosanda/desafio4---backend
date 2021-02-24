@@ -1,0 +1,64 @@
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js">
+</script>
+<div style="width: 100%">
+<input id="ingresotexto"></input>
+<h2 id="texto" ></h2>
+</div>
+<script>
+
+const { Observable } = rxjs
+
+// Funcion invertir cadana
+function invertir(cadena) {
+  var x = cadena.length;
+  var cadenaInvertida = "";
+ 
+  while (x>=0) {
+    cadenaInvertida = cadenaInvertida + cadena.charAt(x);
+    x--;
+  }
+  return cadenaInvertida;
+}
+// manejo evento
+function removeHandler() { //desregistro del evento
+    ingresoimput.removeEventListener('keyup', updateValue);
+    }
+
+ingresoimput = document.getElementById('ingresotexto') //capturar elemento
+ingresoimput.addEventListener('keyup', updateValue) 
+ 
+
+function updateValue(e) {
+console.log(e.target.value) //para  ver si desregistro el evento
+function ingreso() {
+
+return new Observable(ingreso =>{
+    
+    ingreso.next(invertir(e.target.value))
+    if(e.target.value==="error") ingreso.error("Escribiste Error")
+    if(e.target.value==="complete") ingreso.complete()
+
+})
+}
+
+//suscribirme
+let suscriptor = ingreso().subscribe( 
+ingreso => document.getElementById('texto').innerHTML=ingreso,
+error =>console.log(error),
+()=>console.log("final se escribio complete")
+)
+
+//desuscribirse
+setTimeout(() => {
+    suscriptor.unsubscribe()
+    document.getElementById('texto').innerHTML=""
+    document.getElementById('ingresotexto').disabled= true
+    removeHandler()
+}, 30000);
+
+}
+
+
+
+</script>

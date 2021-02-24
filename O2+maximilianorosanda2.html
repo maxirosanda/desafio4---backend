@@ -1,0 +1,55 @@
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js">
+</script>
+
+<div style="width: 100%">
+<input id="ingresotexto"></input>
+<h2 id="texto" ></h2>
+</div>
+
+<script>
+
+const {fromEvent} = rxjs;
+const { map } = rxjs.operators;
+
+
+// Funcion invertir cadana
+function invertir(cadena) {
+  var x = cadena.length;
+  var cadenaInvertida = "";
+ 
+  while (x>=0) {
+    cadenaInvertida = cadenaInvertida + cadena.charAt(x);
+    x--;
+  }
+  return cadenaInvertida;
+}
+//-------------
+
+const ingreso = fromEvent(ingresotexto,'keyup').pipe(map(event => event.target.value
+))
+
+const observer = {
+  next: ingreso =>document.getElementById('texto').innerHTML=invertir(ingreso),
+  error: (err) => console.log(`se tipio error`),
+  complete: () => console.log("se tipio complete")
+}
+
+//subscribe to the filtered observable
+const subscription = ingreso.subscribe(observer)
+
+if(ingreso==="error") ingreso.error("Escribiste Error")
+    if(ingreso==="complete") ingreso.complete()
+
+/*
+//desuscribirse
+setTimeout(() => {
+    ingreso.unsubscribe()
+    document.getElementById('texto').innerHTML=""
+    document.getElementById('ingresotexto').disabled= true
+}, 5000);
+
+*/
+
+
+</script>
