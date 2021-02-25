@@ -29,20 +29,23 @@ function invertir(cadena) {
 const ingreso = fromEvent(ingresotexto,'keyup').pipe(map(event => event.target.value
 ))
 
-const observer = {
+const observable = {
   next: ingreso =>document.getElementById('texto').innerHTML=invertir(ingreso),
   error: (err) => console.log(`se tipio error`),
   complete: () => console.log("se tipio complete")
 }
 
-//subscribe to the filtered observable
-const subscription = ingreso.subscribe(observer)
-
-if(ingreso==="error") ingreso.error("Escribiste Error")
-    if(ingreso==="complete") ingreso.complete()
+//suscribirse al observable filtrado
+const subscription = ingreso.subscribe(observable)
 
 /*
+no se donde hacer los condicionales
+    if(ingreso==="error") ingreso.error("Escribiste Error")
+    if(ingreso==="complete") ingreso.complete()
+*/
+/*
 //desuscribirse
+no me funciona el unsubscribe
 setTimeout(() => {
     ingreso.unsubscribe()
     document.getElementById('texto').innerHTML=""
