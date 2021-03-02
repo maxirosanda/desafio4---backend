@@ -1,58 +1,70 @@
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js">
 </script>
 
 <div style="width: 100%">
-<input id="ingresotexto"></input>
-<h2 id="texto" ></h2>
+    <input id="ingresotexto"></input>
+    <h2 id="texto"></h2>
 </div>
 
 <script>
 
-const {fromEvent} = rxjs;
-const { map } = rxjs.operators;
+    const { Observable } = rxjs
+    const { map } = rxjs.operators;
 
 
-// Funcion invertir cadana
-function invertir(cadena) {
-  var x = cadena.length;
-  var cadenaInvertida = "";
+    // Funcion invertir cadana
+    function invertir(cadena) {
+        var x = cadena.length;
+        var cadenaInvertida = "";
+
+        while (x >= 0) {
+            cadenaInvertida = cadenaInvertida + cadena.charAt(x);
+            x--;
+        }
+        return cadenaInvertida;
+    }
+    //-------------
+    function removeHandler() { //desregistro del evento
+    ingresoimput.removeEventListener('keyup', updateValue);
+    }    
+ingresoimput = document.getElementById('ingresotexto') //capturar elemento
+ingresoimput.addEventListener('keyup', updateValue) 
  
-  while (x>=0) {
-    cadenaInvertida = cadenaInvertida + cadena.charAt(x);
-    x--;
-  }
-  return cadenaInvertida;
-}
-//-------------
 
-const ingreso = fromEvent(ingresotexto,'keyup').pipe(map(event => event.target.value
-))
+function updateValue(e) {
+console.log(e.target.value) //para  ver si desregistro el evento
+function ingreso() {
 
-const observable = {
-  next: ingreso =>document.getElementById('texto').innerHTML=invertir(ingreso),
-  error: (err) => console.log(`se tipio error`),
-  complete: () => console.log("se tipio complete")
+return new Observable(ingreso =>{
+    
+    ingreso.next(e.target.value)
+    if(e.target.value==="error") ingreso.error("Escribiste Error")
+    if(e.target.value==="complete") ingreso.complete()
+
+})
 }
 
-//suscribirse al observable filtrado
-const subscription = ingreso.subscribe(observable)
 
-/*
-no se donde hacer los condicionales
-    if(ingreso==="error") ingreso.error("Escribiste Error")
-    if(ingreso==="complete") ingreso.complete()
-*/
-/*
+
+//suscribirme
+let suscriptor = ingreso().pipe(map(cadena =>invertir(cadena))).subscribe( 
+ingreso => document.getElementById('texto').innerHTML=ingreso,
+error =>console.log(error),
+()=>console.log("final se escribio complete")
+)
+
 //desuscribirse
-no me funciona el unsubscribe
 setTimeout(() => {
-    ingreso.unsubscribe()
+    suscriptor.unsubscribe()
     document.getElementById('texto').innerHTML=""
     document.getElementById('ingresotexto').disabled= true
-}, 5000);
+    removeHandler()
+}, 30000);
 
-*/
+}
+
+
+
 
 
 </script>
